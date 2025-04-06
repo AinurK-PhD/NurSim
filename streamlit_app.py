@@ -1,9 +1,6 @@
 import streamlit as st
 
-st.title(' NurSim: A Basic Reservoir Simulation App')
-st.info('This app is designed ')
-
-)
+st.title("NurSim: A Basic Reservoir Simulation App")
 
 st.info("""
 **Welcome to NurSim** – a simple 2D reservoir simulator built using Finite Difference Methods (FDM).
@@ -21,4 +18,5 @@ st.info("""
 
 🧠 **Created by:** Ainur Khakimov (PhD Candidate – Reservoir Engineering)
 
-📁 [GitHub Repository](https://github.com/AinurK-PhD/NurSim)""")
+📁 [GitHub Repository](https://github.com/AinurK-PhD/NurSim)
+""")
