@@ -1,5 +1,5 @@
 import streamlit as st
 
-st.title('🎈 App Name')
+st.title(' NurSim - A Basic Reservoir Simulation App')
 
 st.write('Hello world!')
