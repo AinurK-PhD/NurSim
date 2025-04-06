@@ -58,7 +58,8 @@ st.subheader("🌐 Boundary Conditions")
 boundary_type = st.selectbox("Boundary Condition Type", options=["No-flow", "Constant Pressure"])
 P_boundary = None
 if boundary_type == "Constant Pressure":
-    P_boundary = st.number_input("Boundary Pressure (psi)", min_value=0_
+    P_boundary = st.number_input("Boundary Pressure (psi)", min_value=0.0, value=1000.0)
+
 
 
 
