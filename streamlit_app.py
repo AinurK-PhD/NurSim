@@ -21,5 +21,4 @@ st.info("""
 
 🧠 **Created by:** Ainur Khakimov (PhD Candidate – Reservoir Engineering)
 
-📁 [GitHub Repository](https://github.com/AinurK-PhD/NurSim)
-""")
+📁 [GitHub Repository](https://github.com/AinurK-PhD/NurSim)""")
