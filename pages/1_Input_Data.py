@@ -1,7 +1,7 @@
 import streamlit as st
 
 # -----------------------------
-# PAGE 1: INPUT DATA
+# PAGE 1: 1_INPUT DATA
 # -----------------------------
 st.title("🧾 Input Data – NurSim Setup")
 
