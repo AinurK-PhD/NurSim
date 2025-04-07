@@ -19,6 +19,7 @@ st.info("""
 - NumPy & Matplotlib 📊
 
 🧠 **Created by:** Ainur Khakimov (PhD Candidate, Department of Petroleum Engineering)
+
 👀 **Supervised by:** Dr. Mohammad Sarim Jamal (Instructor, Department of Petroleum Engineering)
 
 
