@@ -23,10 +23,15 @@
 ## 📁 Project Structure
 
 NurSim/ 
+
 ├── Home.py # Main entry page (welcome/info) 
+
 ├── pages/ │ 
+
   ├── 1_Input_Data.py # Reservoir and fluid properties input 
+  
   │ └── 2_Results.py # Results page (coming soon) 
+  
 ├── requirements.txt # Python dependencies
 
 
