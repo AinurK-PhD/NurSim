@@ -18,7 +18,9 @@ st.info("""
 - Streamlit 🌐
 - NumPy & Matplotlib 📊
 
-🧠 **Created by:** Ainur Khakimov (PhD Candidate – Reservoir Engineering)
+🧠 **Created by:** Ainur Khakimov (PhD Candidate, Department of Petroleum Engineering)
+👀 **Supervised by:** Dr. Mohammad Sarim Jamal (Instructor, Department of Petroleum Engineering)
+
 
 📁 [GitHub Repository](https://github.com/AinurK-PhD/NurSim)
 """)
