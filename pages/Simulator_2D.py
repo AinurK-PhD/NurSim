@@ -21,24 +21,22 @@ if "I_counter" not in st.session_state:
     st.session_state.I_counter = 1
 
 # ----------------------------------------
-# Helper to determine next well number dynamically
-# ----------------------------------------
-def get_next_well_name(prefix):
-    existing = [int(w[2:]) for w in [w["name"] for w in st.session_state.wells if w["name"].startswith(prefix)]]
-    for n in range(1, max(existing + [0]) + 2):
-        name = f"{prefix}_{n}"
-        if name not in [w["name"] for w in st.session_state.wells]:
-            return name
-
-# ----------------------------------------
 # Helper to add a new well
 # ----------------------------------------
 def add_well(well_type, i, j, rate):
+    # Check for existing well at same location
+    for well in st.session_state.wells:
+        if well["i"] == i and well["j"] == j:
+            st.warning("A well already exists at this location. Please choose a different grid block.")
+            return
+
     if well_type == "Producer":
-        name = get_next_well_name("P")
+        name = f"P_{st.session_state.P_counter}"
+        st.session_state.P_counter += 1
         color = "black"
     else:
-        name = get_next_well_name("I")
+        name = f"I_{st.session_state.I_counter}"
+        st.session_state.I_counter += 1
         color = "blue"
 
     st.session_state.wells.append({
@@ -59,9 +57,9 @@ with st.form("manual_well_form"):
     with col1:
         well_type = st.selectbox("Well Type", ["Producer", "Injector"], key="manual_type")
     with col2:
-        i = st.number_input("Grid i", min_value=0, max_value=Nx - 1, value=0, key="manual_i")
+        i = st.number_input("Grid i (x)", min_value=0, max_value=Nx - 1, value=0, key="manual_i")
     with col3:
-        j = st.number_input("Grid j", min_value=0, max_value=Ny - 1, value=0, key="manual_j")
+        j = st.number_input("Grid j (y)", min_value=0, max_value=Ny - 1, value=0, key="manual_j")
     with col4:
         rate = st.number_input("Rate (STB/day)", min_value=0.0, value=500.0, key="manual_rate")
     submitted = st.form_submit_button("➕ Add Well")
@@ -83,7 +81,7 @@ else:
     st.info("No wells added yet.")
 
 # ----------------------------------------
-# Grid Plotting with Plotly (Grid Indices)
+# Grid Plotting with Plotly
 # ----------------------------------------
 st.subheader("📍 2D Grid Map with Wells")
 x_vals = np.arange(0, Nx + 1)
@@ -99,18 +97,16 @@ for y in y_vals:
 for well in st.session_state.wells:
     x = well["i"] + 0.5
     y = well["j"] + 0.5
-    fig.add_trace(go.Scatter(
-        x=[x], y=[y], mode='markers+text',
-        marker=dict(color=well["color"], size=12),
-        text=[well["name"]],
-        textposition="top center",
-        showlegend=False
-    ))
+    fig.add_trace(go.Scatter(x=[x], y=[y], mode='markers+text',
+                             marker=dict(color=well["color"], size=12),
+                             text=[well["name"]],
+                             textposition="top center",
+                             showlegend=False))
 
 fig.update_layout(
     title="Reservoir Grid View",
-    xaxis=dict(title="i (Grid index)", range=[0, Nx], tickmode='linear', dtick=1, showgrid=False),
-    yaxis=dict(title="j (Grid index)", range=[0, Ny], tickmode='linear', dtick=1, showgrid=False),
+    xaxis=dict(title="i (grid index)", range=[0, Nx], tick0=0, dtick=1, showgrid=False),
+    yaxis=dict(title="j (grid index)", range=[0, Ny], tick0=0, dtick=1, showgrid=False),
     height=600,
     width=800
 )
