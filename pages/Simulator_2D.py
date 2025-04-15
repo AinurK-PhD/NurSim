@@ -24,7 +24,6 @@ if "I_counter" not in st.session_state:
 # Helper to add a new well
 # ----------------------------------------
 def add_well(well_type, i, j, rate):
-    # Check for existing well at same location
     for well in st.session_state.wells:
         if well["i"] == i and well["j"] == j:
             st.warning("A well already exists at this location. Please choose a different grid block.")
@@ -51,7 +50,7 @@ def add_well(well_type, i, j, rate):
 # ----------------------------------------
 # Layout - Well Input (Manual Placement)
 # ----------------------------------------
-st.subheader("🛢️ Manual Well Placement")
+st.markdown("<h3 style='text-align: center;'>🛢️ Manual Well Placement</h3>", unsafe_allow_html=True)
 with st.form("manual_well_form"):
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -65,12 +64,13 @@ with st.form("manual_well_form"):
     submitted = st.form_submit_button("➕ Add Well")
     if submitted:
         add_well(well_type, int(i), int(j), rate)
-        st.success(f"{well_type} well added at ({i}, {j})")
+        if not any(w["i"] == i and w["j"] == j for w in st.session_state.wells[:-1]):
+            st.success(f"{well_type} well added at ({i}, {j})")
 
 # ----------------------------------------
 # Delete Wells
 # ----------------------------------------
-st.subheader("🗑️ Remove a Well")
+st.markdown("<h3 style='text-align: center;'>🗑️ Remove a Well</h3>", unsafe_allow_html=True)
 well_names = [w["name"] for w in st.session_state.wells]
 if well_names:
     well_to_remove = st.selectbox("Select Well to Remove", well_names)
@@ -83,15 +83,15 @@ else:
 # ----------------------------------------
 # Grid Plotting with Plotly
 # ----------------------------------------
-st.subheader("📍 2D Grid Map with Wells")
-x_vals = np.arange(0, Nx + 1)
-y_vals = np.arange(0, Ny + 1)
+st.markdown("<h3 style='text-align: center;'>📍 2D Grid Map with Wells</h3>", unsafe_allow_html=True)
+x_vals = np.arange(0, Nx)
+y_vals = np.arange(0, Ny)
 
 fig = go.Figure()
 for x in x_vals:
-    fig.add_shape(type="line", x0=x, y0=0, x1=x, y1=Ny, line=dict(color="lightgray", width=1))
+    fig.add_shape(type="line", x0=x, y0=0, x1=x, y1=Ny - 1, line=dict(color="lightgray", width=1))
 for y in y_vals:
-    fig.add_shape(type="line", x0=0, y0=y, x1=Nx, y1=y, line=dict(color="lightgray", width=1))
+    fig.add_shape(type="line", x0=0, y0=y, x1=Nx - 1, y1=y, line=dict(color="lightgray", width=1))
 
 # Add wells to plot
 for well in st.session_state.wells:
@@ -105,8 +105,8 @@ for well in st.session_state.wells:
 
 fig.update_layout(
     title="Reservoir Grid View",
-    xaxis=dict(title="i (grid index)", range=[0, Nx], tick0=0, dtick=1, showgrid=False),
-    yaxis=dict(title="j (grid index)", range=[0, Ny], tick0=0, dtick=1, showgrid=False),
+    xaxis=dict(title="i (grid index)", range=[0, Nx], tickmode="linear", dtick=1, showgrid=False),
+    yaxis=dict(title="j (grid index)", range=[0, Ny], tickmode="linear", dtick=1, showgrid=False),
     height=600,
     width=800
 )
@@ -116,7 +116,7 @@ st.plotly_chart(fig, use_container_width=True)
 # ----------------------------------------
 # Display Current Wells Table
 # ----------------------------------------
-st.markdown("### 💾 Current Wells")
+st.markdown("<h3 style='text-align: center;'>💾 Current Wells</h3>", unsafe_allow_html=True)
 if st.session_state.wells:
     st.dataframe(st.session_state.wells)
 else:
