@@ -1,14 +1,15 @@
 import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
+import pandas as pd
 
 # ----------------------------------------
 # Retrieve grid dimensions from session or fallback
 # ----------------------------------------
 Nx = st.session_state.get("Nx", 10)
 Ny = st.session_state.get("Ny", 10)
-dx = st.session_state.get("dx", 100.0)
-dy = st.session_state.get("dy", 100.0)
+dx = st.session_state.get("dx", 1.0)
+dy = st.session_state.get("dy", 1.0)
 
 # ----------------------------------------
 # Initialize session state for wells
@@ -24,9 +25,10 @@ if "I_counter" not in st.session_state:
 # Helper to add a new well
 # ----------------------------------------
 def add_well(well_type, i, j, rate):
+    # Check for existing well at this location
     for well in st.session_state.wells:
         if well["i"] == i and well["j"] == j:
-            st.warning("A well already exists at this location. Please choose a different grid block.")
+            st.warning("A well already exists at this location. Please choose a different cell.")
             return
 
     if well_type == "Producer":
@@ -50,7 +52,7 @@ def add_well(well_type, i, j, rate):
 # ----------------------------------------
 # Layout - Well Input (Manual Placement)
 # ----------------------------------------
-st.markdown("<h3 style='text-align: center;'>🛢️ Manual Well Placement</h3>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center;'>🛢️ Manual Well Placement</h2>", unsafe_allow_html=True)
 with st.form("manual_well_form"):
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -70,7 +72,7 @@ with st.form("manual_well_form"):
 # ----------------------------------------
 # Delete Wells
 # ----------------------------------------
-st.markdown("<h3 style='text-align: center;'>🗑️ Remove a Well</h3>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center;'>🗑️ Remove a Well</h2>", unsafe_allow_html=True)
 well_names = [w["name"] for w in st.session_state.wells]
 if well_names:
     well_to_remove = st.selectbox("Select Well to Remove", well_names)
@@ -83,15 +85,16 @@ else:
 # ----------------------------------------
 # Grid Plotting with Plotly
 # ----------------------------------------
-st.markdown("<h3 style='text-align: center;'>📍 2D Grid Map with Wells</h3>", unsafe_allow_html=True)
-x_vals = np.arange(0, Nx)
-y_vals = np.arange(0, Ny)
+st.markdown("<h2 style='text-align: center;'>📍 2D Grid Map with Wells</h2>", unsafe_allow_html=True)
+
+x_vals = np.arange(0, Nx + 1)
+y_vals = np.arange(0, Ny + 1)
 
 fig = go.Figure()
 for x in x_vals:
-    fig.add_shape(type="line", x0=x, y0=0, x1=x, y1=Ny - 1, line=dict(color="lightgray", width=1))
+    fig.add_shape(type="line", x0=x, y0=0, x1=x, y1=Ny, line=dict(color="lightgray", width=1))
 for y in y_vals:
-    fig.add_shape(type="line", x0=0, y0=y, x1=Nx - 1, y1=y, line=dict(color="lightgray", width=1))
+    fig.add_shape(type="line", x0=0, y0=y, x1=Nx, y1=y, line=dict(color="lightgray", width=1))
 
 # Add wells to plot
 for well in st.session_state.wells:
@@ -104,9 +107,9 @@ for well in st.session_state.wells:
                              showlegend=False))
 
 fig.update_layout(
-    title="Reservoir Grid View",
-    xaxis=dict(title="i (grid index)", range=[0, Nx], tickmode="linear", dtick=1, showgrid=False),
-    yaxis=dict(title="j (grid index)", range=[0, Ny], tickmode="linear", dtick=1, showgrid=False),
+    title="<b>Reservoir Grid View</b>",
+    xaxis=dict(title="i (grid index)", range=[0, Nx], tick0=0, dtick=1, showgrid=False),
+    yaxis=dict(title="j (grid index)", range=[0, Ny], tick0=0, dtick=1, showgrid=False),
     height=600,
     width=800
 )
@@ -116,8 +119,19 @@ st.plotly_chart(fig, use_container_width=True)
 # ----------------------------------------
 # Display Current Wells Table
 # ----------------------------------------
-st.markdown("<h3 style='text-align: center;'>💾 Current Wells</h3>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center;'>💾 Current Wells</h2>", unsafe_allow_html=True)
+
 if st.session_state.wells:
-    st.dataframe(st.session_state.wells)
+    df = pd.DataFrame(st.session_state.wells)
+    df_display = df.drop(columns=["color"])
+    st.dataframe(df_display)
+
+    csv = df_display.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="⬇️ Download Wells Data as CSV",
+        data=csv,
+        file_name='current_wells.csv',
+        mime='text/csv',
+    )
 else:
     st.info("No wells added yet.")
