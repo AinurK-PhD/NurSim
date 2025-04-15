@@ -108,11 +108,19 @@ fig.update_layout(
     title="Reservoir Grid View",
     xaxis=dict(
         title="x (ft)", range=[0, Nx * dx], tick0=0, dtick=dx, showgrid=False,
-        tickvals=tick_vals_x, ticktext=tick_text_x, side="bottom"
+        tickvals=tick_vals_x, ticktext=tick_text_x, side="bottom",
+        overlaying='x2', matches='x2'
+    ),
+    xaxis2=dict(
+        tickvals=tick_vals_x, ticktext=tick_text_x, side="top", overlaying='x', showticklabels=True
     ),
     yaxis=dict(
         title="y (ft)", range=[0, Ny * dy], tick0=0, dtick=dy, showgrid=False,
-        tickvals=tick_vals_y, ticktext=tick_text_y, side="left"
+        tickvals=tick_vals_y, ticktext=tick_text_y, side="left",
+        overlaying='y2', matches='y2'
+    ),
+    yaxis2=dict(
+        tickvals=tick_vals_y, ticktext=tick_text_y, side="right", overlaying='y', showticklabels=True
     ),
     height=600,
     width=800,
