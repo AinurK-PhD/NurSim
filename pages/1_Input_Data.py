@@ -26,18 +26,33 @@ with col3:
     phi = st.number_input("Porosity (fraction)", min_value=0.01, max_value=1.0, value=0.2)
 
 # --------------------------------------
-# Fluid Properties
+# Fluid Properties (Oil & Water)
 # --------------------------------------
-st.subheader("🛢️ Fluid Properties")
+st.subheader("🛢️ Fluid Properties (Two-Phase)")
+
 col4, col5 = st.columns(2)
 
 with col4:
-    mu = st.number_input("Viscosity μ (cp)", min_value=0.1, value=1.0)
-    ct = st.number_input("Total compressibility ct (psi⁻¹)", min_value=1e-7, value=1e-5, format="%.1e")
+    st.markdown("🟡 **Oil Properties**")
+    mu_oil = st.number_input("Oil Viscosity μₒ (cp)", min_value=0.1, value=1.0)
+    Bo = st.number_input("Oil Formation Volume Factor Bₒ (RB/STB)", min_value=0.1, value=1.2)
 
 with col5:
-    Bo = st.number_input("Formation Volume Factor Bo (RB/STB)", min_value=0.1, value=1.2)
+    st.markdown("🔵 **Water Properties**")
+    mu_water = st.number_input("Water Viscosity μ𝓌 (cp)", min_value=0.1, value=0.5)
+    Bw = st.number_input("Water Formation Volume Factor B𝓌 (RB/STB)", min_value=0.1, value=1.0)
+
+# Additional common fluid properties
+st.markdown("🧪 **Common Fluid Properties**")
+col6, col7 = st.columns(2)
+
+with col6:
+    ct = st.number_input("Total Compressibility ct (psi⁻¹)", min_value=1e-7, value=1e-5, format="%.1e")
+
+with col7:
     P_init = st.number_input("Initial Reservoir Pressure (psi)", min_value=100.0, value=3000.0)
+
+
 
 # --------------------------------------
 # Simulation Time Parameters
