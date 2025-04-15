@@ -52,18 +52,16 @@ with col6:
 with col7:
     P_init = st.number_input("Initial Reservoir Pressure (psi)", min_value=100.0, value=3000.0)
 
-
-
 # --------------------------------------
 # Simulation Time Parameters
 # --------------------------------------
 st.subheader("⏱️ Simulation Time Settings")
-col6, col7 = st.columns(2)
+col8, col9 = st.columns(2)
 
-with col6:
+with col8:
     dt = st.number_input("Time Step Δt (days)", min_value=0.1, value=10.0)
 
-with col7:
+with col9:
     total_time = st.number_input("Total Simulation Time (days)", min_value=10.0, value=300.0)
 
 # --------------------------------------
@@ -75,7 +73,26 @@ P_boundary = None
 if boundary_type == "Constant Pressure":
     P_boundary = st.number_input("Boundary Pressure (psi)", min_value=0.0, value=1000.0)
 
+# --------------------------------------
+# Save values into session_state
+# --------------------------------------
+st.session_state.Nx = Nx
+st.session_state.Ny = Ny
+st.session_state.dx = dx
+st.session_state.dy = dy
+st.session_state.k = k
+st.session_state.phi = phi
 
+st.session_state.mu_oil = mu_oil
+st.session_state.Bo = Bo
+st.session_state.mu_water = mu_water
+st.session_state.Bw = Bw
+st.session_state.ct = ct
+st.session_state.P_init = P_init
 
+st.session_state.dt = dt
+st.session_state.total_time = total_time
+st.session_state.boundary_type = boundary_type
+st.session_state.P_boundary = P_boundary
 
-
+st.success("✅ Input data saved in session state. You can now proceed to the 2D Simulator.")
