@@ -1,7 +1,6 @@
 import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
-from streamlit_plotly_events import plotly_events
 
 # ----------------------------------------
 # Retrieve grid dimensions from session or fallback
@@ -76,9 +75,9 @@ else:
     st.info("No wells added yet.")
 
 # ----------------------------------------
-# Grid Plotting with Plotly (Hover & Click)
+# Grid Plotting with Plotly
 # ----------------------------------------
-st.subheader("📍 2D Grid Map with Wells (Click-to-Add)")
+st.subheader("📍 2D Grid Map with Wells")
 x_vals = np.arange(0, Nx * dx + dx, dx)
 y_vals = np.arange(0, Ny * dy + dy, dy)
 
@@ -87,6 +86,26 @@ for x in x_vals:
     fig.add_shape(type="line", x0=x, y0=0, x1=x, y1=Ny * dy, line=dict(color="lightgray", width=1))
 for y in y_vals:
     fig.add_shape(type="line", x0=0, y0=y, x1=Nx * dx, y1=y, line=dict(color="lightgray", width=1))
+
+# Add top and right axis labels in grid coordinates
+grid_x_labels = [f"{i}" for i in range(Nx)]
+grid_y_labels = [f"{j}" for j in range(Ny)]
+fig.add_trace(go.Scatter(
+    x=[i * dx + dx / 2 for i in range(Nx)],
+    y=[Ny * dy + dy * 0.2] * Nx,
+    mode="text",
+    text=grid_x_labels,
+    textposition="top center",
+    showlegend=False
+))
+fig.add_trace(go.Scatter(
+    x=[Nx * dx + dx * 0.2] * Ny,
+    y=[j * dy + dy / 2 for j in range(Ny)],
+    mode="text",
+    text=grid_y_labels,
+    textposition="middle right",
+    showlegend=False
+))
 
 # Add wells to plot
 for well in st.session_state.wells:
@@ -101,29 +120,12 @@ fig.update_layout(
     title="Reservoir Grid View",
     xaxis=dict(title="x (ft)", range=[0, Nx * dx], tick0=0, dtick=dx, showgrid=False),
     yaxis=dict(title="y (ft)", range=[0, Ny * dy], tick0=0, dtick=dy, showgrid=False),
-    height=600,
-    width=800,
-    clickmode='event+select'
+    height=700,
+    width=900,
+    margin=dict(l=40, r=40, t=60, b=40)
 )
 
-click_result = plotly_events(fig, click_event=True, select_event=False, hover_event=False, key="click")
-
-if click_result:
-    clicked_x = click_result[0]['x']
-    clicked_y = click_result[0]['y']
-    grid_i = int(clicked_x // dx)
-    grid_j = int(clicked_y // dy)
-    st.info(f"You clicked at grid block ({grid_i}, {grid_j})")
-    with st.form("click_add_form"):
-        colA, colB = st.columns([2, 3])
-        with colA:
-            well_type = st.selectbox("Well Type", ["Producer", "Injector"], key="click_type")
-        with colB:
-            rate = st.number_input("Rate (STB/day)", min_value=0.0, value=500.0, key="click_rate")
-        confirm = st.form_submit_button("✅ Confirm Placement")
-        if confirm:
-            add_well(well_type, grid_i, grid_j, rate)
-            st.success(f"{well_type} well added at ({grid_i}, {grid_j})")
+st.plotly_chart(fig, use_container_width=True)
 
 # ----------------------------------------
 # Display Current Wells Table
