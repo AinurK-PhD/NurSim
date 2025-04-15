@@ -96,8 +96,25 @@ col_save, col_reset = st.columns([1, 1])
 
 with col_save:
     if st.button("💾 Save & Apply"):
-        for key in defaults.keys():
-            st.session_state[key] = eval(key)
+        st.session_state["Nx"] = Nx
+        st.session_state["Ny"] = Ny
+        st.session_state["dx"] = dx
+        st.session_state["dy"] = dy
+        st.session_state["k"] = k
+        st.session_state["phi"] = phi
+
+        st.session_state["mu_oil"] = mu_oil
+        st.session_state["Bo"] = Bo
+        st.session_state["mu_water"] = mu_water
+        st.session_state["Bw"] = Bw
+        st.session_state["ct"] = ct
+        st.session_state["P_init"] = P_init
+
+        st.session_state["dt"] = dt
+        st.session_state["total_time"] = total_time
+        st.session_state["boundary_type"] = boundary_type
+        st.session_state["P_boundary"] = P_boundary
+
         st.success("✅ Input data saved in session state. You can now proceed to the 2D Simulator.")
 
 with col_reset:
