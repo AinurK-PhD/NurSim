@@ -81,48 +81,42 @@ st.subheader("📍 2D Grid Map with Wells")
 x_vals = np.arange(0, Nx * dx + dx, dx)
 y_vals = np.arange(0, Ny * dy + dy, dy)
 
+tick_vals_x = np.arange(dx / 2, Nx * dx, dx)
+tick_text_x = [str(i) for i in range(Nx)]
+tick_vals_y = np.arange(dy / 2, Ny * dy, dy)
+tick_text_y = [str(j) for j in range(Ny)]
+
 fig = go.Figure()
 for x in x_vals:
     fig.add_shape(type="line", x0=x, y0=0, x1=x, y1=Ny * dy, line=dict(color="lightgray", width=1))
 for y in y_vals:
     fig.add_shape(type="line", x0=0, y0=y, x1=Nx * dx, y1=y, line=dict(color="lightgray", width=1))
 
-# Add top and right axis labels in grid coordinates
-grid_x_labels = [f"{i}" for i in range(Nx)]
-grid_y_labels = [f"{j}" for j in range(Ny)]
-fig.add_trace(go.Scatter(
-    x=[i * dx + dx / 2 for i in range(Nx)],
-    y=[Ny * dy + dy * 0.2] * Nx,
-    mode="text",
-    text=grid_x_labels,
-    textposition="top center",
-    showlegend=False
-))
-fig.add_trace(go.Scatter(
-    x=[Nx * dx + dx * 0.2] * Ny,
-    y=[j * dy + dy / 2 for j in range(Ny)],
-    mode="text",
-    text=grid_y_labels,
-    textposition="middle right",
-    showlegend=False
-))
-
 # Add wells to plot
 for well in st.session_state.wells:
     x = well["i"] * dx + dx / 2
     y = well["j"] * dy + dy / 2
-    fig.add_trace(go.Scatter(x=[x], y=[y], mode='markers+text',
-                             marker=dict(color=well["color"], size=12),
-                             text=[well["name"]],
-                             textposition="top center"))
+    fig.add_trace(go.Scatter(
+        x=[x], y=[y], mode='markers+text',
+        marker=dict(color=well["color"], size=12),
+        text=[well["name"]],
+        textposition="top center",
+        name=""
+    ))
 
 fig.update_layout(
     title="Reservoir Grid View",
-    xaxis=dict(title="x (ft)", range=[0, Nx * dx], tick0=0, dtick=dx, showgrid=False),
-    yaxis=dict(title="y (ft)", range=[0, Ny * dy], tick0=0, dtick=dy, showgrid=False),
-    height=700,
-    width=900,
-    margin=dict(l=40, r=40, t=60, b=40)
+    xaxis=dict(
+        title="x (ft)", range=[0, Nx * dx], tick0=0, dtick=dx, showgrid=False,
+        tickvals=tick_vals_x, ticktext=tick_text_x, side="bottom"
+    ),
+    yaxis=dict(
+        title="y (ft)", range=[0, Ny * dy], tick0=0, dtick=dy, showgrid=False,
+        tickvals=tick_vals_y, ticktext=tick_text_y, side="left"
+    ),
+    height=600,
+    width=800,
+    showlegend=False
 )
 
 st.plotly_chart(fig, use_container_width=True)
