@@ -15,22 +15,28 @@ dy = st.session_state.get("dy", 100.0)
 # ----------------------------------------
 if "wells" not in st.session_state:
     st.session_state.wells = []
-if "P_counter" not in st.session_state:
-    st.session_state.P_counter = 1
-if "I_counter" not in st.session_state:
-    st.session_state.I_counter = 1
+
+# ----------------------------------------
+# Helper to get the next available index
+# ----------------------------------------
+def get_next_well_number(well_type):
+    prefix = "P_" if well_type == "Producer" else "I_"
+    existing_numbers = [int(w["name"].split("_")[1]) for w in st.session_state.wells if w["name"].startswith(prefix)]
+    n = 1
+    while n in existing_numbers:
+        n += 1
+    return n
 
 # ----------------------------------------
 # Helper to add a new well
 # ----------------------------------------
 def add_well(well_type, i, j, rate):
+    number = get_next_well_number(well_type)
     if well_type == "Producer":
-        name = f"P_{st.session_state.P_counter}"
-        st.session_state.P_counter += 1
+        name = f"P_{number}"
         color = "black"
     else:
-        name = f"I_{st.session_state.I_counter}"
-        st.session_state.I_counter += 1
+        name = f"I_{number}"
         color = "blue"
 
     st.session_state.wells.append({
@@ -75,22 +81,22 @@ else:
     st.info("No wells added yet.")
 
 # ----------------------------------------
-# Grid Plotting with Plotly (only i-j indices)
+# Grid Plotting with Plotly
 # ----------------------------------------
 st.subheader("📍 2D Grid Map with Wells")
-x_vals = np.arange(0, Nx + 1, 1)
-y_vals = np.arange(0, Ny + 1, 1)
+x_vals = np.arange(0, Nx * dx + dx, dx)
+y_vals = np.arange(0, Ny * dy + dy, dy)
 
 fig = go.Figure()
 for x in x_vals:
-    fig.add_shape(type="line", x0=x, y0=0, x1=x, y1=Ny, line=dict(color="lightgray", width=1))
+    fig.add_shape(type="line", x0=x, y0=0, x1=x, y1=Ny * dy, line=dict(color="lightgray", width=1))
 for y in y_vals:
-    fig.add_shape(type="line", x0=0, y0=y, x1=Nx, y1=y, line=dict(color="lightgray", width=1))
+    fig.add_shape(type="line", x0=0, y0=y, x1=Nx * dx, y1=y, line=dict(color="lightgray", width=1))
 
 # Add wells to plot
 for well in st.session_state.wells:
-    x = well["i"] + 0.5
-    y = well["j"] + 0.5
+    x = well["i"] * dx + dx / 2
+    y = well["j"] * dy + dy / 2
     fig.add_trace(go.Scatter(x=[x], y=[y], mode='markers+text',
                              marker=dict(color=well["color"], size=12),
                              text=[well["name"]],
@@ -99,11 +105,10 @@ for well in st.session_state.wells:
 
 fig.update_layout(
     title="Reservoir Grid View",
-    xaxis=dict(title="i", range=[0, Nx], tick0=0, dtick=1, showgrid=False),
-    yaxis=dict(title="j", range=[0, Ny], tick0=0, dtick=1, showgrid=False),
+    xaxis=dict(title="i", range=[0, Nx * dx], tick0=0, dtick=dx, showgrid=False),
+    yaxis=dict(title="j", range=[0, Ny * dy], tick0=0, dtick=dy, showgrid=False),
     height=600,
-    width=800,
-    showlegend=False
+    width=800
 )
 
 st.plotly_chart(fig, use_container_width=True)
