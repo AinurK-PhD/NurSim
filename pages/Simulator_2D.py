@@ -75,53 +75,32 @@ else:
     st.info("No wells added yet.")
 
 # ----------------------------------------
-# Grid Plotting with Plotly
+# Grid Plotting with Plotly (only i-j indices)
 # ----------------------------------------
 st.subheader("📍 2D Grid Map with Wells")
-x_vals = np.arange(0, Nx * dx + dx, dx)
-y_vals = np.arange(0, Ny * dy + dy, dy)
-
-tick_vals_x = np.arange(dx / 2, Nx * dx, dx)
-tick_text_x = [str(i) for i in range(Nx)]
-tick_vals_y = np.arange(dy / 2, Ny * dy, dy)
-tick_text_y = [str(j) for j in range(Ny)]
+x_vals = np.arange(0, Nx + 1, 1)
+y_vals = np.arange(0, Ny + 1, 1)
 
 fig = go.Figure()
 for x in x_vals:
-    fig.add_shape(type="line", x0=x, y0=0, x1=x, y1=Ny * dy, line=dict(color="lightgray", width=1))
+    fig.add_shape(type="line", x0=x, y0=0, x1=x, y1=Ny, line=dict(color="lightgray", width=1))
 for y in y_vals:
-    fig.add_shape(type="line", x0=0, y0=y, x1=Nx * dx, y1=y, line=dict(color="lightgray", width=1))
+    fig.add_shape(type="line", x0=0, y0=y, x1=Nx, y1=y, line=dict(color="lightgray", width=1))
 
 # Add wells to plot
 for well in st.session_state.wells:
-    x = well["i"] * dx + dx / 2
-    y = well["j"] * dy + dy / 2
-    fig.add_trace(go.Scatter(
-        x=[x], y=[y], mode='markers+text',
-        marker=dict(color=well["color"], size=12),
-        text=[well["name"]],
-        textposition="top center",
-        name=""
-    ))
+    x = well["i"] + 0.5
+    y = well["j"] + 0.5
+    fig.add_trace(go.Scatter(x=[x], y=[y], mode='markers+text',
+                             marker=dict(color=well["color"], size=12),
+                             text=[well["name"]],
+                             textposition="top center",
+                             showlegend=False))
 
 fig.update_layout(
     title="Reservoir Grid View",
-    xaxis=dict(
-        title="x (ft)", range=[0, Nx * dx], tick0=0, dtick=dx, showgrid=False,
-        tickvals=tick_vals_x, ticktext=tick_text_x, side="bottom",
-        overlaying='x2', matches='x2'
-    ),
-    xaxis2=dict(
-        tickvals=tick_vals_x, ticktext=tick_text_x, side="top", overlaying='x', showticklabels=True
-    ),
-    yaxis=dict(
-        title="y (ft)", range=[0, Ny * dy], tick0=0, dtick=dy, showgrid=False,
-        tickvals=tick_vals_y, ticktext=tick_text_y, side="left",
-        overlaying='y2', matches='y2'
-    ),
-    yaxis2=dict(
-        tickvals=tick_vals_y, ticktext=tick_text_y, side="right", overlaying='y', showticklabels=True
-    ),
+    xaxis=dict(title="i", range=[0, Nx], tick0=0, dtick=1, showgrid=False),
+    yaxis=dict(title="j", range=[0, Ny], tick0=0, dtick=1, showgrid=False),
     height=600,
     width=800,
     showlegend=False
