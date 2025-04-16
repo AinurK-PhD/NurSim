@@ -6,6 +6,13 @@ import streamlit as st
 st.title("🧾 Input Data – NurSim Setup")
 st.markdown("Define all parameters for the reservoir simulation. All units are in **field units**.")
 
+
+if st.session_state.get("reset_triggered", False):
+    st.session_state["reset_triggered"] = False
+    st.rerun()
+
+
+
 # -----------------------------
 # Default values
 # -----------------------------
@@ -103,5 +110,6 @@ with col_reset:
     if st.button("🔄 Reset to Default"):
         for key, val in defaults.items():
             st.session_state[key] = val
+        st.session_state["reset_triggered"] = True
         st.success("All fields reset to default values.")
-        st.rerun()
+
