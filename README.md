@@ -1,6 +1,7 @@
 # 🛢️ NurSim – 2D Reservoir Simulation App
 
 **NurSim** is an interactive, browser-based reservoir simulator for **2D two-phase (oil-water) flow**, built using Python and Streamlit. It is designed for educational and research purposes, focusing on field-unit input, well placement, and simulation using the **IMPES method** (Implicit Pressure, Explicit Saturation).
+P.S. Development is currently on hold due to Python's limitations in efficiently handling full-field reservoir flow simulations, but may be resumed in the future.
 
 ---
 
