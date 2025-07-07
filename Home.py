@@ -22,7 +22,7 @@ Welcome to **NurSim** – a 2D Interactive Reservoir Simulator based on the **IM
 👨‍🏫 **Supervised by:** Dr. Mohammad Sarim Jamal (Instructor, Department of Petroleum Engineering)  
 📁 [GitHub Repository](https://github.com/AinurK-PhD/NurSim)
 
-⏳ **P.S.** Development is currently on hold due to Python's limitations in efficiently handling full-field reservoir flow simulations, but may be resumed in the future.
+⏳ **P.S.** **Development is currently on hold due to Python's limitations in efficiently handling full-field reservoir flow simulations, but may be resumed in the future.**
 
 
 """)
